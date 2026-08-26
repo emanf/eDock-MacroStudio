@@ -1,3 +1,5 @@
+<p align="center"><img src="ss_macro_studio.png?v=1" width="600" alt="Macro Studio"></p>
+
 # Macro Studio
 
 Macro Studio is a visual automation workspace for [eDock](https://github.com/emanf/eDock). It gives you a practical way to turn repetitive desktop work into reusable macros: build a sequence of commands, record real mouse and keyboard activity, add variables and flow control, then run the result with precise execution settings.
