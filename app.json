@@ -3,7 +3,7 @@
   "id": "emanf.macro-studio",
   "title": "Macro Studio",
   "description": "Design, record, edit, and run modular desktop automation macros with mouse, keyboard, files, windows, dialogs, variables, timers, screen recognition, and Python-powered commands.",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "last_modified": "2026-08-26",
   "author": "eManF",
   "author_email": "emanf.cco@gmail.com",
@@ -20,7 +20,7 @@
     "event",
     "python"
   ],
-  "download": "https://github.com/emanf/eDock-MacroStudio/releases/download/v0.8.2/emanf.macro-studio-v0.8.2.zip",
+  "download": "https://github.com/emanf/eDock-MacroStudio/releases/download/v0.8.3/emanf.macro-studio-v0.8.3.zip",
   "manifest": "https://github.com/emanf/eDock-MacroStudio/app.json",
   "changelog": "",
   "min_edock_version": "0.1.0",
