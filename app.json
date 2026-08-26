@@ -20,7 +20,7 @@
     "event",
     "python"
   ],
-  "download": "https://github.com/emanf/eDock-MacroStudio/",
+  "download": "https://github.com/emanf/eDock-MacroStudio/releases/download/v0.8.2/emanf.macro-studio-v0.8.2.zip",
   "manifest": "https://github.com/emanf/eDock-MacroStudio/app.json",
   "changelog": "",
   "min_edock_version": "0.1.0",
