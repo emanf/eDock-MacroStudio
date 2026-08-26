@@ -33,7 +33,7 @@ It is designed for people who want more control than a one-off script, without h
 
 Macro Studio runs inside eDock.
 
-1. Open ['eDock'](https://github.com/emanf/eDock).
+1. Open [eDock](https://github.com/emanf/eDock).
 2. Open Spotlight and type `>Macro Studio`.
 3. Install and enable Macro Studio if it is not already installed.
 4. Restart eDock when requested.
@@ -169,4 +169,4 @@ No license.
 
 ## Wiki
 
-The repository wiki content is maintained in [`wiki/`](https://github.com/emanf/eDock-MacroStudio/wiki). Start with [Getting Started](https://github.com/emanf/eDock-MacroStudio/wiki/Getting-Started.md), then continue to [Building Macros](https://github.com/emanf/eDock-MacroStudio/wiki/Building-Macros.md).
+The repository wiki content is maintained in [Wiki](https://github.com/emanf/eDock-MacroStudio/wiki). Start with [Getting Started](https://github.com/emanf/eDock-MacroStudio/wiki/Getting-Started.md), then continue to [Building Macros](https://github.com/emanf/eDock-MacroStudio/wiki/Building-Macros.md).
