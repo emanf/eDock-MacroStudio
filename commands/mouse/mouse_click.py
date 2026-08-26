@@ -13,7 +13,6 @@ class MouseClickCommand(MacroCommand):
     category = MouseCategory
     icon = "mc:e762"
     description = "Send mouse click."
-    os = "linux"
     fields = [
         {
             "name": "click_mode",
