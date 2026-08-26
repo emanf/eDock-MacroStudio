@@ -1,0 +1,7 @@
+pyautogui
+pynput
+numpy
+soundfile
+soundcard
+opencv-python
+PyAudioWPatch
