@@ -28,13 +28,12 @@ It is designed for people who want more control than a one-off script, without h
 - **Enable/disable items** — temporarily skip a command without deleting it.
 - **Projects and standalone macros** — save a complete project or save an individual macro group for reuse.
 - **Extensible command registry** — built-in commands are loaded automatically, and user command modules can be added from app data.
-- **Theme-aware eDock UI** — the editor follows the active eDock theme.
 
 ## Install
 
 Macro Studio runs inside eDock.
 
-1. Open eDock.
+1. Open ['eDock'](https://github.com/emanf/eDock).
 2. Open Spotlight and type `>Macro Studio`.
 3. Install and enable Macro Studio if it is not already installed.
 4. Restart eDock when requested.
@@ -166,8 +165,8 @@ Keep changes inside the app directory when possible, follow the existing command
 
 ## License
 
-No license is currently declared in `app.json`. Add an explicit license before publishing Macro Studio for reuse outside your own eDock installation.
+No license.
 
 ## Wiki
 
-The repository wiki content is maintained in [`wiki/`](wiki/Home.md). Start with [Getting Started](wiki/Getting-Started.md), then continue to [Building Macros](wiki/Building-Macros.md).
+The repository wiki content is maintained in [`wiki/`](https://github.com/emanf/eDock-MacroStudio/wiki). Start with [Getting Started](https://github.com/emanf/eDock-MacroStudio/wiki/Getting-Started.md), then continue to [Building Macros](https://github.com/emanf/eDock-MacroStudio/wiki/Building-Macros.md).
