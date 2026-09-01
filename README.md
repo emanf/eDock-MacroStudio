@@ -72,7 +72,7 @@ For a first experiment, combine `mouse.click`, `keyboard.type_text`, and `timing
 
 The built-in library is organized into these categories:
 
-`audio` · `clipboard` · `dialogs` · `files` · `flow_control` · `keyboard` · `mouse` · `numbers` · `screen_recognition` · `system` · `text` · `timing` · `variables` · `windows`
+`audio` · `clipboard` · `dialogs` · `files` · `flow_control` · `keyboard` · `mouse` · `network` · `numbers` · `screen_recognition` · `system` · `text` · `timing` · `variables` · `windows`
 
 Examples include:
 
