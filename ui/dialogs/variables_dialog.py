@@ -9,10 +9,12 @@ from PySide6.QtWidgets import (
     QTableWidget,
     QTableWidgetItem,
     QVBoxLayout,
+    QWidget,
 )
 
 from ..forms.form_builder import FormBuilder
 from ..styles.main_style import MAIN_STYLE
+from ..widgets.title_bar import TitleBar
 
 
 class VariablesDialog(QDialog):
@@ -25,13 +27,11 @@ class VariablesDialog(QDialog):
         self.setWindowTitle("Variables")
         self.setModal(True)
         self.setWindowModality(Qt.WindowModality.WindowModal)
+        self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint)
+        self.setAttribute(Qt.WA_TranslucentBackground)
         self.resize(640, 420)
         self.setMinimumSize(520, 340)
-        self.setStyleSheet(MAIN_STYLE + """
-QDialog {
-    background: #101114;
-}
-""")
+        self.setStyleSheet(MAIN_STYLE)
 
         self.build_ui()
         self.refresh_variables_table()
@@ -113,9 +113,32 @@ QDialog {
         ]
 
     def build_ui(self):
-        layout = QVBoxLayout(self)
-        layout.setContentsMargins(18, 18, 18, 18)
-        layout.setSpacing(14)
+        outer = QVBoxLayout(self)
+        outer.setContentsMargins(1, 1, 1, 1)
+        outer.setSpacing(0)
+
+        card = QWidget()
+        card.setObjectName("rootCard")
+        card_layout = QVBoxLayout()
+        card_layout.setContentsMargins(0, 0, 0, 0)
+        card_layout.setSpacing(0)
+        card.setLayout(card_layout)
+        outer.addWidget(card)
+
+        card_layout.addWidget(
+            TitleBar(
+                self,
+                title="Variables",
+                window_buttons=False,
+            )
+        )
+
+        content = QWidget()
+        layout = QVBoxLayout(content)
+        layout.setContentsMargins(16, 12, 16, 16)
+        layout.setSpacing(12)
+        content.setLayout(layout)
+        card_layout.addWidget(content, 1)
 
         panel = QFrame()
         panel.setObjectName("Panel")

@@ -5,3 +5,4 @@ soundfile
 soundcard
 opencv-python
 PyAudioWPatch
+requests>=2.31.0

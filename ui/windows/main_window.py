@@ -9,6 +9,7 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QMainWindow,
     QPushButton,
+    QSizeGrip,
     QSizePolicy,
     QSplitter,
     QVBoxLayout,
@@ -23,9 +24,9 @@ from ...core.model.macro_project import MacroProject
 from ..widgets.category_list import CategoryList
 from ..widgets.command_list import CommandList
 from ..widgets.control_bar import ControlBar
-from ..widgets.header_bar import HeaderBar
 from ..widgets.macro_list import MacroList
 from ..widgets.macro_tabs import MacroTabs
+from ..widgets.title_bar import TitleBar
 from ..dialogs.variables_dialog import VariablesDialog
 from ..forms.form_builder import FormBuilder
 from ..forms.form_context import FormContext
@@ -58,6 +59,9 @@ class MacroStudioWindow(QMainWindow):
 
         icon_path = Path(__file__).resolve().parents[2] / "assets" / "macro_studio.png"
 
+        self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint)
+        self.setAttribute(Qt.WA_TranslucentBackground)
+
         self.setWindowTitle("Macro Studio")
         self.setWindowIcon(QIcon(str(icon_path)))
         self.resize(1240, 760)
@@ -70,19 +74,42 @@ class MacroStudioWindow(QMainWindow):
         self.project_controller.new_project(mark_saved=True)
 
     def build_ui(self):
+        container = QWidget()
+        container.setObjectName("rootCard")
+        self.setCentralWidget(container)
+
+        outer = QVBoxLayout(container)
+        outer.setContentsMargins(1, 1, 1, 1)
+        outer.setSpacing(0)
+
+        self.title_bar = TitleBar(self)
+        outer.addWidget(self.title_bar)
+
         root = QWidget()
-        self.setCentralWidget(root)
+        outer.addWidget(root, 1)
 
         layout = QVBoxLayout(root)
-        layout.setContentsMargins(18, 18, 18, 18)
-        layout.setSpacing(14)
+        layout.setContentsMargins(12, 10, 12, 10)
+        layout.setSpacing(10)
 
-        self.header_bar = HeaderBar()
-        self.header_bar.title_changed.connect(self.project_controller.on_project_title_changed)
-        self.header_bar.new_clicked.connect(self.project_controller.new_project)
-        self.header_bar.open_clicked.connect(self.project_controller.open_project)
-        self.header_bar.save_clicked.connect(self.project_controller.save_project)
-        layout.addWidget(self.header_bar)
+        self.title_bar.add_action_button(
+            "add",
+            "New Project",
+            self.project_controller.new_project,
+        )
+        self.title_bar.add_action_button(
+            "folder_open",
+            "Open Project",
+            self.project_controller.open_project,
+        )
+        self.title_bar.add_action_button(
+            "save",
+            "Save Project",
+            self.project_controller.save_project,
+        )
+        self.title_bar.project_title_changed.connect(
+            self.on_project_title_edited
+        )
 
         self.control_bar = ControlBar()
         self.control_bar.run_main_clicked.connect(self.run_controller.run_main_macro)
@@ -92,6 +119,7 @@ class MacroStudioWindow(QMainWindow):
         layout.addWidget(self.control_bar)
 
         splitter = QSplitter(Qt.Orientation.Horizontal)
+        splitter.setHandleWidth(3)
 
         self.category_list = CategoryList()
         self.category_list.setMinimumWidth(50)
@@ -139,6 +167,20 @@ class MacroStudioWindow(QMainWindow):
         splitter.setSizes([280, 280, 680])
 
         layout.addWidget(splitter, 1)
+
+        self.size_grip = QSizeGrip(container)
+        self.size_grip.setFixedSize(16, 16)
+        self.size_grip.raise_()
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+
+        if hasattr(self, "size_grip"):
+            container = self.centralWidget()
+            self.size_grip.move(
+                container.width() - self.size_grip.width() - 3,
+                container.height() - self.size_grip.height() - 3,
+            )
 
     def on_delete_shortcut_activated(self):
         selected_rows = self.macro_list.selected_rows()
@@ -220,6 +262,11 @@ class MacroStudioWindow(QMainWindow):
 
     def on_category_selected(self, category_id):
         self.command_list.set_commands(self.registry.category_commands(category_id))
+
+    def on_project_title_edited(self, value):
+        self.project_controller.on_project_title_changed(value)
+        self.project_controller.push_state()
+        self.title_bar.set_project_title(self.project.title)
 
     def on_title_changed(self, value):
         if self.project.active_index < 0 or self.project.active_index >= len(self.project.macros):

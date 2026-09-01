@@ -2,8 +2,9 @@ import platform
 from copy import deepcopy
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QDialog, QDialogButtonBox, QFormLayout, QLabel, QMessageBox, QSizePolicy, QVBoxLayout
+from PySide6.QtWidgets import QDialog, QDialogButtonBox, QFormLayout, QLabel, QMessageBox, QSizePolicy, QVBoxLayout, QWidget
 
+from ..widgets.title_bar import TitleBar
 from .fields_registry import DialogFieldRegistry, create_default_registry
 from .form_context import FormContext
 from .form_style import FORM_STYLE
@@ -27,7 +28,10 @@ class FormBuilder(QDialog):
         self.runtime_variables = deepcopy(runtime_variables) if isinstance(runtime_variables, list) else []
         self.runtime_comments = deepcopy(runtime_comments) if isinstance(runtime_comments, list) else []
 
-        self.setWindowTitle(str(self.schema.get("title", "Input") or "Input"))
+        title_text = str(self.schema.get("title", "Input") or "Input")
+        self.setWindowTitle(title_text)
+        self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint)
+        self.setAttribute(Qt.WA_TranslucentBackground)
         self.setMinimumWidth(FORM_MIN_WIDTH)
         self.setFixedWidth(FORM_MIN_WIDTH)
         self.setSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Fixed)
@@ -35,8 +39,32 @@ class FormBuilder(QDialog):
         self.setStyleSheet(FORM_STYLE)
 
         root = QVBoxLayout(self)
-        root.setContentsMargins(18, 18, 18, 18)
-        root.setSpacing(14)
+        root.setContentsMargins(1, 1, 1, 1)
+        root.setSpacing(0)
+
+        card = QWidget()
+        card.setObjectName("rootCard")
+
+        card_layout = QVBoxLayout(card)
+        card_layout.setContentsMargins(0, 0, 0, 0)
+        card_layout.setSpacing(0)
+        card.setLayout(card_layout)
+        root.addWidget(card)
+
+        card_layout.addWidget(
+            TitleBar(
+                self,
+                title=title_text,
+                window_buttons=False,
+            )
+        )
+
+        content = QWidget()
+        content_layout = QVBoxLayout()
+        content_layout.setContentsMargins(18, 12, 18, 16)
+        content_layout.setSpacing(14)
+        content.setLayout(content_layout)
+        card_layout.addWidget(content, 1)
 
         form = QFormLayout()
         form.setLabelAlignment(Qt.AlignmentFlag.AlignLeft)
@@ -74,7 +102,7 @@ class FormBuilder(QDialog):
             form.addRow(label, widget)
             self.bind_field_change(name)
 
-        root.addLayout(form)
+        content_layout.addLayout(form)
 
         buttons = QDialogButtonBox()
         cancel_button = buttons.addButton(
@@ -86,7 +114,7 @@ class FormBuilder(QDialog):
         )
         cancel_button.clicked.connect(self.reject)
         save_button.clicked.connect(self.accept)
-        root.addWidget(buttons)
+        content_layout.addWidget(buttons)
 
         self.refresh_computed_fields()
         self.apply_field_rules()
@@ -383,8 +411,8 @@ class FormBuilder(QDialog):
 
             title = str(field.get("title", name) or name)
             invalid_titles.append(title)
-            label.setStyleSheet("color: #f87171;")
-            widget.setStyleSheet(widget.styleSheet() + "border-color: #ef4444;")
+            label.setStyleSheet("color: #e87868;")
+            widget.setStyleSheet(widget.styleSheet() + "border-color: #e87868;")
 
             if first_invalid_widget is None:
                 first_invalid_widget = widget
@@ -429,16 +457,16 @@ class FormBuilder(QDialog):
 
             if field.get("validate_comment_exists") is True and value not in runtime_comments:
                 invalid_messages.append(f"{title}: selected comment does not exist.")
-                label.setStyleSheet("color: #f87171;")
-                widget.setStyleSheet(widget.styleSheet() + "border-color: #ef4444;")
+                label.setStyleSheet("color: #e87868;")
+                widget.setStyleSheet(widget.styleSheet() + "border-color: #e87868;")
 
                 if first_invalid_widget is None:
                     first_invalid_widget = widget
 
             if field.get("validate_comment_unique") is True and value in runtime_comments:
                 invalid_messages.append(f"{title}: this comment already exists.")
-                label.setStyleSheet("color: #f87171;")
-                widget.setStyleSheet(widget.styleSheet() + "border-color: #ef4444;")
+                label.setStyleSheet("color: #e87868;")
+                widget.setStyleSheet(widget.styleSheet() + "border-color: #e87868;")
 
                 if first_invalid_widget is None:
                     first_invalid_widget = widget

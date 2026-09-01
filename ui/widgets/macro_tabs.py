@@ -44,7 +44,7 @@ class MacroTabs(QListWidget):
         self.apply_style()
 
     def apply_style(self):
-        selected_color = "#dc2626" if self.play_mode else "#2563eb"
+        selected_color = "#e87868" if self.play_mode else "#26272d"
 
         self.setStyleSheet(f"""
             QListWidget {{
@@ -54,16 +54,16 @@ class MacroTabs(QListWidget):
             }}
 
             QListWidget::item {{
-                background-color: #17191f;
-                border: 1px solid #2b2f3a;
+                background-color: #121214;
+                border: 1px solid #232428;
                 border-radius: 8px;
                 padding: 8px;
-                color: #e5e7eb;
+                color: #d6d6db;
             }}
 
             QListWidget::item:hover {{
-                background-color: #1f222b;
-                border: 1px solid #3a4050;
+                background-color: #1a1b1e;
+                border: 1px solid #2f3036;
             }}
 
             QListWidget::item:selected {{
@@ -81,23 +81,23 @@ class MacroTabs(QListWidget):
                 continue
 
             if self.is_add_item(item):
-                item.setBackground(QColor("#17191f"))
-                item.setForeground(QColor("#e5e7eb"))
+                item.setBackground(QColor("#121214"))
+                item.setForeground(QColor("#d6d6db"))
                 continue
 
             is_running = bool(item.data(RUNNING_ROLE))
 
             if is_running:
-                item.setBackground(QColor("#1d4ed8" if self.play_mode else "#1e40af"))
+                item.setBackground(QColor("#2f3036" if self.play_mode else "#2f3036"))
                 item.setForeground(QColor("#ffffff"))
                 continue
 
             if bool(item.data(MAIN_ITEM_ROLE)):
-                item.setBackground(QColor("#0f1117"))
-                item.setForeground(QColor("#f9fafb"))
+                item.setBackground(QColor("#0d0d0f"))
+                item.setForeground(QColor("#f0f0f2"))
             else:
-                item.setBackground(QColor("#17191f"))
-                item.setForeground(QColor("#e5e7eb"))
+                item.setBackground(QColor("#121214"))
+                item.setForeground(QColor("#d6d6db"))
 
     def set_play_mode(self, enabled):
         self.play_mode = bool(enabled)

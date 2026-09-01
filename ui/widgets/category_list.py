@@ -25,7 +25,9 @@ class CategoryList(QListWidget):
 
             QListWidget::item {
                 background-color: rgba(255, 255, 255, 0.04);
+                border: 1px solid transparent;
                 border-radius: 8px;
+                color: #f0f0f2;
             }
 
             QListWidget::item:hover {
@@ -33,7 +35,10 @@ class CategoryList(QListWidget):
             }
 
             QListWidget::item:selected {
-                background-color: #3b82f6;
+                background-color: #26272d;
+                border: 1px solid #2f3036;
+                border-left: 3px solid #d9b45b;
+                color: #ffffff;
             }
         """)
 

@@ -145,7 +145,7 @@ class ProjectController(QObject):
         self.project.execution = deepcopy(state["execution"])
         self.project.active_index = state["active_index"]
 
-        self.window.header_bar.set_project_title(self.project.title)
+        self.window.title_bar.set_project_title(self.project.title)
         self.window.control_bar.set_execution_data(self.project.execution)
         self.window.refresh_macro_tabs()
         self.window.load_active_macro_to_ui()
@@ -186,9 +186,7 @@ class ProjectController(QObject):
             self.project.execution
         )
 
-        self.window.header_bar.set_project_title(
-            self.project.title
-        )
+        self.window.title_bar.set_project_title(self.project.title)
 
         self.window.items_controller.history_map.clear()
 
@@ -245,6 +243,16 @@ class ProjectController(QObject):
                 return
 
             self.project.path = Path(path)
+            new_title = self.project.path.stem.strip()
+
+            if new_title:
+                self.project.title = new_title
+                self.project.name = self.window.storage.safe_name(
+                    new_title
+                )
+                self.window.title_bar.set_project_title(
+                    self.project.title
+                )
 
         try:
             active_macro = ""
@@ -268,6 +276,7 @@ class ProjectController(QObject):
             )
             self.project.path = path
             self.project.mark_saved(self.project_data())
+            self.window.title_bar.set_project_title(self.project.title)
             self.messages.show_information(
                 "Saved",
                 f"Project saved:\n{path}",
@@ -333,9 +342,7 @@ class ProjectController(QObject):
         )
         self.project.ensure_main_macro()
 
-        self.window.header_bar.set_project_title(
-            self.project.title
-        )
+        self.window.title_bar.set_project_title(self.project.title)
         self.window.control_bar.set_execution_data(
             self.project.execution
         )

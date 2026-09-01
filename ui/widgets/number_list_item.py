@@ -11,7 +11,7 @@ class NumberListItem(QWidget):
         self.disabled_state = False
 
         layout = QHBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setContentsMargins(10, 0, 10, 0)
         layout.setSpacing(12)
 
         self.number_label = QLabel(str(number))
@@ -39,7 +39,7 @@ class NumberListItem(QWidget):
         if self.running:
             self.number_label.setStyleSheet("""
                 color: #ffffff;
-                background: #dc2626;
+                background: #e87868;
                 font-weight: 700;
                 margin: 0;
                 padding: 0;
@@ -55,7 +55,7 @@ class NumberListItem(QWidget):
 
         if self.disabled_state:
             self.number_label.setStyleSheet("""
-                color: rgba(244, 244, 245, 0.52);
+                color: rgba(240, 240, 242, 0.52);
                 background: rgba(51, 51, 51, 0.42);
                 font-weight: 600;
                 margin: 0;
@@ -64,14 +64,14 @@ class NumberListItem(QWidget):
             """)
             self.title_label.setStyleSheet("""
                 font-weight: 500;
-                color: rgba(244, 244, 245, 0.52);
+                color: rgba(240, 240, 242, 0.52);
                 background: transparent;
                 border: none;
             """)
             return
 
         self.number_label.setStyleSheet("""
-            color: #f4f4f5;
+            color: #f0f0f2;
             background: #AA333333;
             font-weight: 600;
             margin: 0;
@@ -80,7 +80,7 @@ class NumberListItem(QWidget):
         """)
         self.title_label.setStyleSheet("""
             font-weight: 500;
-            color: #f4f4f5;
+            color: #f0f0f2;
             background: transparent;
             border: none;
         """)

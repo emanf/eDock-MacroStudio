@@ -11,7 +11,7 @@ class IconListItem(QWidget):
         self.disabled_state = False
 
         layout = QHBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setContentsMargins(10, 0, 10, 0)
         layout.setSpacing(12)
 
         self.icon_label = QLabel()
@@ -36,11 +36,11 @@ class IconListItem(QWidget):
 
     def apply_style(self):
         if self.disabled_state:
-            icon_color = "rgba(244, 244, 245, 0.38)"
-            title_color = "rgba(244, 244, 245, 0.38)"
+            icon_color = "rgba(240, 240, 242, 0.38)"
+            title_color = "rgba(240, 240, 242, 0.38)"
         else:
-            icon_color = "#f4f4f5"
-            title_color = "#f4f4f5"
+            icon_color = "#f0f0f2"
+            title_color = "#f0f0f2"
 
         self.icon_label.setStyleSheet(f"""
             color: {icon_color};

@@ -1,6 +1,6 @@
 from copy import deepcopy
 
-from PySide6.QtCore import Signal, QSize, Qt, QPoint, QMimeData
+from PySide6.QtCore import Signal, QSize, Qt, QPoint, QRect, QMimeData
 from PySide6.QtGui import QAction, QDrag, QKeySequence, QPixmap, QPainter, QPen, QColor
 from PySide6.QtWidgets import QListWidget, QListWidgetItem, QAbstractItemView, QMenu, QApplication
 
@@ -44,7 +44,8 @@ class MacroList(QListWidget):
         self.apply_macro_style()
 
     def apply_macro_style(self):
-        selected_color = "#dc2626" if self.play_mode else "#3b82f6"
+        selected_color = "#e87868" if self.play_mode else "#26272d"
+        accent_color = "#e87868" if self.play_mode else "#d9b45b"
 
         self.setStyleSheet(f"""
             QListWidget {{
@@ -55,7 +56,9 @@ class MacroList(QListWidget):
 
             QListWidget::item {{
                 background-color: rgba(255, 255, 255, 0.04);
+                border: 1px solid transparent;
                 border-radius: 8px;
+                color: #f0f0f2;
             }}
 
             QListWidget::item:hover {{
@@ -64,6 +67,9 @@ class MacroList(QListWidget):
 
             QListWidget::item:selected {{
                 background-color: {selected_color};
+                border: 1px solid #2f3036;
+                border-left: 3px solid {accent_color};
+                color: #ffffff;
             }}
         """)
 
@@ -208,6 +214,18 @@ class MacroList(QListWidget):
         rows = [row for row in rows if row >= 0]
         return sorted(set(rows))
 
+    def _select_range(self, start_row, count):
+        self.clearSelection()
+        first = max(0, start_row)
+        last = max(-1, min(start_row + count - 1, self.count() - 1))
+
+        for row in range(first, last + 1):
+            item = self.item(row)
+            if item is not None:
+                item.setSelected(True)
+
+        self.setCurrentRow(last)
+
     def mousePressEvent(self, event):
         if self.play_mode:
             event.ignore()
@@ -278,28 +296,40 @@ class MacroList(QListWidget):
         if not QApplication.mouseButtons() & Qt.MouseButton.LeftButton:
             return
 
-        item = self.currentItem()
-        if item is None:
-            return
+        rows = self.selected_rows()
 
-        row = self.row(item)
-        if row < 0:
-            return
+        if not rows:
+            item = self.currentItem()
+            if item is not None:
+                rows = [self.row(item)]
 
-        if self.row_is_invalid(row):
+        rows = [
+            row
+            for row in rows
+            if row >= 0 and not self.row_is_invalid(row)
+        ]
+
+        if not rows:
             return
 
         mime_data = QMimeData()
-        mime_data.setData("application/x-emanf-macro-row", str(row).encode("utf-8"))
+        mime_data.setData(
+            "application/x-emanf-macro-row",
+            ",".join(str(row) for row in rows).encode("utf-8"),
+        )
 
         drag = QDrag(self)
         drag.setMimeData(mime_data)
 
-        item_rect = self.visualItemRect(item)
-        if not item_rect.isValid():
+        drag_rect = QRect()
+
+        for row in rows:
+            drag_rect = drag_rect.united(self.visualItemRect(self.item(row)))
+
+        if not drag_rect.isValid():
             return
 
-        source_pixmap = self.viewport().grab(item_rect)
+        source_pixmap = self.viewport().grab(drag_rect)
 
         drag_pixmap = QPixmap(source_pixmap.size())
         drag_pixmap.fill(Qt.transparent)
@@ -310,7 +340,7 @@ class MacroList(QListWidget):
         painter.end()
 
         drag.setPixmap(drag_pixmap)
-        drag.setHotSpot(QPoint(12, item_rect.height() // 2))
+        drag.setHotSpot(QPoint(12, min(24, drag_rect.height() // 2)))
         drag.exec(Qt.CopyAction | Qt.MoveAction, Qt.MoveAction)
 
     def dragEnterEvent(self, event):
@@ -381,7 +411,7 @@ class MacroList(QListWidget):
             source_row_text = bytes(event.mimeData().data("application/x-emanf-macro-row")).decode("utf-8").strip()
 
             try:
-                source_row = int(source_row_text)
+                source_rows = sorted(set(int(part) for part in source_row_text.split(",")))
             except Exception:
                 self.external_drop_row = None
                 self.viewport().update()
@@ -394,41 +424,53 @@ class MacroList(QListWidget):
             self.external_drop_row = None
             self.viewport().update()
 
-            if source_row < 0 or source_row >= len(self.items_data):
-                event.ignore()
-                return
+            source_rows = [
+                source_row
+                for source_row in source_rows
+                if 0 <= source_row < len(self.items_data)
+                and not self.row_is_invalid(source_row)
+            ]
 
-            if self.row_is_invalid(source_row):
+            if not source_rows:
                 event.ignore()
                 return
 
             if copy_mode:
                 self.history_state_requested.emit()
-                copied_item = deepcopy(self.items_data[source_row])
-                row = max(0, min(row, len(self.items_data)))
-                self.items_data.insert(row, copied_item)
+                insert_row = max(0, min(row, len(self.items_data)))
+                copied_items = [deepcopy(self.items_data[source_row]) for source_row in source_rows]
+
+                for offset, copied_item in enumerate(copied_items):
+                    self.items_data.insert(insert_row + offset, copied_item)
+
                 self.refresh(restore_scroll=True)
-                self.setCurrentRow(row)
+                self._select_range(insert_row, len(copied_items))
                 self.history_state_requested.emit()
                 event.setDropAction(Qt.CopyAction)
                 event.accept()
                 return
 
-            if row == source_row or row == source_row + 1:
+            contiguous = source_rows == list(range(source_rows[0], source_rows[0] + len(source_rows)))
+
+            if contiguous and source_rows[0] <= row <= source_rows[-1] + 1:
                 event.setDropAction(Qt.MoveAction)
                 event.accept()
                 return
 
             self.history_state_requested.emit()
-            moved_item = self.items_data.pop(source_row)
+            moved_items = [self.items_data[source_row] for source_row in source_rows]
+            insert_row = row - sum(1 for source_row in source_rows if source_row < row)
 
-            if source_row < row:
-                row -= 1
+            for source_row in reversed(source_rows):
+                self.items_data.pop(source_row)
 
-            row = max(0, min(row, len(self.items_data)))
-            self.items_data.insert(row, moved_item)
+            insert_row = max(0, min(insert_row, len(self.items_data)))
+
+            for offset, moved_item in enumerate(moved_items):
+                self.items_data.insert(insert_row + offset, moved_item)
+
             self.refresh(restore_scroll=True)
-            self.setCurrentRow(row)
+            self._select_range(insert_row, len(moved_items))
             self.history_state_requested.emit()
             event.setDropAction(Qt.MoveAction)
             event.accept()
