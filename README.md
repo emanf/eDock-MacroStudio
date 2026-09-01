@@ -1,4 +1,4 @@
-<p align="center"><img src="ss_macro_studio.png?v=1" width="600" alt="Macro Studio"></p>
+<p align="center"><img src="ss_macro_studio.png?v=2" width="600" alt="Macro Studio"></p>
 
 # Macro Studio
 
