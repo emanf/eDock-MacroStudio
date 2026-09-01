@@ -60,7 +60,7 @@ For a first experiment, combine `mouse.click`, `keyboard.type_text`, and `timing
 
 | Area | Purpose |
 | --- | --- |
-| Header | Create a new project, open a saved project, save the current project, and edit its title |
+| Title bar | Create a new project, open a saved project, save the current project, and edit its title |
 | Control bar | Run, run the selected macro, pause/stop, record, and configure execution |
 | Categories | Filter the command library |
 | Commands | Browse available commands and add them to the active macro |
